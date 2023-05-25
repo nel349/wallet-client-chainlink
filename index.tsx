@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Address, createWalletClient, custom, parseEther, getContract, createPublicClient, http } from 'viem'
-import { polygonMumbai } from 'viem/chains'
+import { mainnet, polygonMumbai } from 'viem/chains'
 import 'viem/window'
 import { EtherscanApi } from './etherscan/service'
 import { parseAbi } from 'viem'
 import { ethers } from 'ethers'
 
+
+const currentChain = mainnet;
+const currentTestingContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+const currentTestUser = "0x9584DD0D9bA9d81103020281B77EA23cAaC4e3A4";
+
 const walletClient = createWalletClient({
-  chain: polygonMumbai,
+  chain: currentChain,
   transport: custom(window.ethereum!),
 })
 
 const publicClient = createPublicClient({
-  chain: polygonMumbai,
+  chain: currentChain,
   transport: http()
 })
 
@@ -49,7 +54,7 @@ function Example() {
 
 
     const etherscanService = new EtherscanApi("Y3UYYUXD327T6UFR8DQP4FHJ42UBURF92E");
-    etherscanService.getAbi('0xdAC17F958D2ee523a2206206994597C13D831ec7').then((abi) => {
+    etherscanService.getAbi(currentTestingContract).then(async (abi) => {
       // console.log("ABI", abi);
 
 
@@ -65,18 +70,25 @@ function Example() {
 
       //   console.log(contract);
 
-      // {
-      //   const data = await publicClient.readContract({
-      //     address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
-      //     abi: wagmiAbi,
-      //     functionName: 'balanceOf',
-      //     args: ['0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC']
-      //   })
-      // }
+      {
+        const data = await publicClient.readContract({
+          address: currentTestingContract,
+          abi: JSON.parse(abi),
+          functionName: 'balanceOf',
+          args: [currentTestUser]
+        })
+        console.log("Result:", data);
+      }
 
-
-      
-
+      {
+        const data = await publicClient.readContract({
+          address: currentTestingContract,
+          abi: JSON.parse(abi),
+          functionName: 'name',
+          args: []
+        })
+        console.log("Result:", data);
+      }
     });
     
 
@@ -124,7 +136,7 @@ function Example() {
     }
     await ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${polygonMumbai.id}` }],
+      params: [{ chainId: `0x${currentChain.id}` }],
     });
   }
 
