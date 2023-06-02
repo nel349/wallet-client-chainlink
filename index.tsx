@@ -6,6 +6,7 @@ import 'viem/window'
 import { EtherscanApi } from './etherscan/service'
 import { parseAbi } from 'viem'
 import { ethers } from 'ethers'
+import FunctionButtonsComponent from './components/FunctionButtonsComponent'
 
 
 const currentChain = mainnet;
@@ -70,25 +71,25 @@ function Example() {
 
       //   console.log(contract);
 
-      {
-        const data = await publicClient.readContract({
-          address: currentTestingContract,
-          abi: JSON.parse(abi),
-          functionName: 'balanceOf',
-          args: [currentTestUser]
-        })
-        console.log("Result:", data);
-      }
+      // {
+      //   const data = await publicClient.readContract({
+      //     address: currentTestingContract,
+      //     abi: JSON.parse(abi),
+      //     functionName: 'balanceOf',
+      //     args: [currentTestUser]
+      //   })
+      //   console.log("Result:", data);
+      // }
 
-      {
-        const data = await publicClient.readContract({
-          address: currentTestingContract,
-          abi: JSON.parse(abi),
-          functionName: 'name',
-          args: []
-        })
-        console.log("Result:", data);
-      }
+      // {
+      //   const data = await publicClient.readContract({
+      //     address: currentTestingContract,
+      //     abi: JSON.parse(abi),
+      //     functionName: 'name',
+      //     args: []
+      //   })
+      //   console.log("Result:", data);
+      // }
     });
     
 
@@ -148,7 +149,11 @@ function Example() {
         <button onClick={sendTransaction}>Send Transaction</button>
       </>
     )
-  return <button onClick={connect}>Connect Wallet</button>
+  return (
+    <>
+        <FunctionButtonsComponent requestType="functions-request" />
+    </>
+  )
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
