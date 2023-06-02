@@ -7,6 +7,7 @@ import { EtherscanApi } from './etherscan/service'
 import { parseAbi } from 'viem'
 import { ethers } from 'ethers'
 import FunctionButtonsComponent from './components/FunctionButtonsComponent'
+import { requestFunctionCall } from './functions-v2/request_new'
 
 
 const currentChain = mainnet;
@@ -147,11 +148,16 @@ function Example() {
       <>
         <div>Connected: {account}</div>
         <button onClick={sendTransaction}>Send Transaction</button>
+
       </>
     )
   return (
     <>
-        <FunctionButtonsComponent requestType="functions-request" />
+        {/* <FunctionButtonsComponent requestType="functions-request" /> */}
+
+        <button onClick={() => {
+          requestFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60", 384, walletClient);
+        }}>Run function WC</button>
     </>
   )
 }
