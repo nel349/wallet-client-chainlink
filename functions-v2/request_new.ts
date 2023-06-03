@@ -21,7 +21,7 @@ async function readFile(path: string): Promise<string> {
 
 const networks = {
   ethereumSepolia: {
-    url: "https://eth-sepolia.g.alchemy.com/v2/zTdY4K5T5mlf87yhBCwJrDqrnoiGhO65",
+    url: (import.meta as any).env.VITE_REACT_APP_ETHEREUM_SEPOLIA_RPC_URL_U,
     gasPrice: undefined,
     accounts: [],
     verifyApiKey: "process.env.ETHERSCAN_API_KEY" || "UNSET",
@@ -181,5 +181,5 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
 
 
 
-  
+
 }
