@@ -1,8 +1,8 @@
 import { createWalletClient, custom, Address, parseEther, getContract, createPublicClient, http, Transport, formatUnits } from 'viem';
 import { goerli, sepolia } from 'viem/chains';
-import FunctionsOracle from '../functions-hardhat-starter-kit/build/artifacts/contracts/dev/functions/FunctionsOracle.sol/FunctionsOracle.json';
-import FunctionsConsumer from '../functions-hardhat-starter-kit/build/artifacts/contracts/FunctionsConsumer.sol/FunctionsConsumer.json';
-import FunctionsBillingRegistry from '../functions-hardhat-starter-kit/build/artifacts/contracts/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json';
+import FunctionsOracle from '../build/artifacts/contracts/dev/functions/FunctionsOracle.sol/FunctionsOracle.json';
+import FunctionsConsumer from '../build/artifacts/contracts/FunctionsConsumer.sol/FunctionsConsumer.json';
+import FunctionsBillingRegistry from '../build/artifacts/contracts/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json';
 import fs from "fs";
 import { ethers } from 'ethers';
 
