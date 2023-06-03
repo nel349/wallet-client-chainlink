@@ -1,15 +1,27 @@
-import { createWalletClient, custom, Address, parseEther, getContract, createPublicClient, http } from 'viem';
+import { createWalletClient, custom, Address, parseEther, getContract, createPublicClient, http, Transport, formatUnits } from 'viem';
 import { goerli, sepolia } from 'viem/chains';
 import FunctionsOracle from '../functions-hardhat-starter-kit/build/artifacts/contracts/dev/functions/FunctionsOracle.sol/FunctionsOracle.json';
 import FunctionsConsumer from '../functions-hardhat-starter-kit/build/artifacts/contracts/FunctionsConsumer.sol/FunctionsConsumer.json';
 import FunctionsBillingRegistry from '../functions-hardhat-starter-kit/build/artifacts/contracts/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json';
+import fs from "fs";
+import { ethers } from 'ethers';
+
 
 
 import { Chain } from 'viem/src';
+import { publicActions } from 'viem/src/clients/decorators/public';
+
+
+async function readFile(path: string): Promise<string> {
+  const response = await fetch(path);
+  const text = await response.text();
+  return text;
+}
+
 
 const networks = {
   ethereumSepolia: {
-    url: "process.env.ETHEREUM_SEPOLIA_RPC_URL" || "UNSET",
+    url: "https://eth-sepolia.g.alchemy.com/v2/zTdY4K5T5mlf87yhBCwJrDqrnoiGhO65",
     gasPrice: undefined,
     accounts: [],
     verifyApiKey: "process.env.ETHERSCAN_API_KEY" || "UNSET",
@@ -59,7 +71,7 @@ const currentTestUser = "0x9584DD0D9bA9d81103020281B77EA23cAaC4e3A4";
 
 const walletClient = createWalletClient({
   chain: currentChain,
-  transport: custom(window.ethereum!),
+  transport: typeof window.ethereum !== 'undefined' ? custom(window.ethereum) : http(),
 });
 
 const publicClient = createPublicClient({
@@ -87,41 +99,87 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
 
   const registryContract = getContract({
     address: registryAddress as Address,
-    abi: FunctionsBillingRegistry.abi ,
+    abi: FunctionsBillingRegistry.abi,
     publicClient,
   })
 
-      // Check that the subscription is valid
-      let subInfo
-      try {
-        subInfo = await registryContract.read.getSubscription([subscriptionId]);
+  // Check that the subscription is valid
+  let subInfo
+  try {
+    subInfo = await registryContract.read.getSubscription([subscriptionId]);
 
-        console.log("subInfo:", subInfo)
-
-        // subInfo = await publicClient.readContract({
-        //   address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
-        //   abi: wagmiAbi,
-        //   functionName: 'balanceOf',
-        //   args: ['0xa5cc3c03994DB5b0d9A5eEdD10CabaB0813678AC']
-        // })
-      } catch (error) {
-        if (error.errorName === "InvalidSubscription") {
-          throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
-        }
-        throw error
-      }
-
-
-      // Validate the client contract has been authorized to use the subscription
-    const existingConsumers = subInfo[2].map((addr) => addr.toLowerCase())
-    if (!existingConsumers.includes(contractAddr.toLowerCase())) {
-      throw Error(`Consumer contract ${contractAddr} is not registered to use subscription ${subscriptionId}`)
+    console.log("subInfo:", subInfo)
+  } catch (error) {
+    if (error.errorName === "InvalidSubscription") {
+      throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
     }
+    throw error
+  }
 
 
+  // Validate the client contract has been authorized to use the subscription
+  const existingConsumers = subInfo[2].map((addr) => addr.toLowerCase())
+  if (!existingConsumers.includes(contractAddr.toLowerCase())) {
+    throw Error(`Consumer contract ${contractAddr} is not registered to use subscription ${subscriptionId}`)
+  }
+
+  const clientContract = getContract({
+    address: contractAddr as Address,
+    abi: FunctionsConsumer.abi,
+    publicClient,
+  });
+
+
+  // Estimate the cost of the request
+  const provider = new ethers.JsonRpcProvider(networks.ethereumSepolia["url"]);
+  const { maxPriorityFeePerGas,  } = await provider.getFeeData();
+  // const { maxPriorityFeePerGas } = await ethers.getDefaultProvider(publicClient).getFeeData();
+  const block = await provider.getBlock("latest");
+  const baseFeePerGas = block?.baseFeePerGas;
+  const estimatedCostJuels = await clientContract.read.estimateCost(
+    [
+      [
+        0, // 0: CodeLocation: Inline
+        1, // SecretsLocation: Remote
+        0, // Code language: Javascript
+        (await readFile("functions-hardhat-starter-kit/calculation-example.js")).toString(),
+        [],
+        ["1", "bitcoin", "btc-bitcoin", "btc", "1000000", "450"],
+      ],
+      subscriptionId,
+      100000, // 100k gas limit
+      maxPriorityFeePerGas && baseFeePerGas ? maxPriorityFeePerGas + baseFeePerGas : baseFeePerGas
+    ]
+  );
+
+  const estimatedCostLink = formatUnits(estimatedCostJuels as bigint, 18);
+
+  // Ensure that the subscription has a sufficient balance
+  const subBalanceInJules = subInfo[0];
+  const linkBalance = formatUnits(subBalanceInJules, 18);
+
+
+  if (subBalanceInJules < (estimatedCostJuels as bigint) ) {
+    throw Error(
+      `Subscription ${subscriptionId} does not have sufficient funds. The estimated cost is ${estimatedCostLink} LINK, but the subscription only has a balance of ${linkBalance} LINK`
+    )
+  } else {
+    console.log(`The estimated cost is ${estimatedCostLink} LINK, and the subscription has a balance of ${linkBalance} LINK`);
+  }
+
+  // TODO: add prompt to ask for confirmation before initiating the request on-chain - frontend
+  // await utils.promptTxCost(transactionEstimateGas, hre, true)
+
+  // Print the estimated cost of the request
+  // Ask for confirmation before initiating the request on-chain
+  // await utils.prompt(
+  //   `If the request's callback uses all ${utils.numberWithCommas(
+  //     gasLimit
+  //   )} gas, this request will charge the subscription:\n${chalk.blue(estimatedCostLink + " LINK")}`
+  // )
+  //  TODO: add cost of this LINK in USD
 
 
 
   
-
 }
