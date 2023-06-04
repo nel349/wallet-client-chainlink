@@ -1,0 +1,21 @@
+Chainlink Functions
+
+npx hardhat functions-sub-create --amount 3 --network ethereumSepolia
+
+
+Sub-add:
+
+npx hardhat functions-sub-add --network ethereumSepolia --subid 384 --contract 0xf4C1B1B5f4885588f25231075D896Cf8D2946d60
+
+npx hardhat functions-sub-add --subid REPLACE_SUBSCRIPTION_ID --contract REPLACE_CONSUMER_CONTRACT_ADDRESS --network REPLACE_NETWORK
+
+
+npx hardhat functions-request --network ethereumSepolia --contract 0xf4C1B1B5f4885588f25231075D896Cf8D2946d60 --subid 384
+
+
+Can you create a component class that can be added to index.tsx such that if passed "functions-request" value as a function request type then it will will display a button that runs an asyncronous action.
+
+
+npx hardhat functions-sub-info --subid 384 --network ethereumSepolia
+
+npx hardhat functions-sub-fund --subid 384 --amount 10 --network ethereumSepolia

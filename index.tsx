@@ -8,6 +8,8 @@ import { parseAbi } from 'viem'
 import { ethers } from 'ethers'
 import FunctionButtonsComponent from './components/FunctionButtonsComponent'
 import { requestFunctionCall } from './functions-v2/request_new'
+import { readResultFunctionCall } from './functions-v2/readResultAndError'
+import { fundSubscriptionCall } from './functions-v2/fund_subscription'
 
 
 const currentChain = mainnet;
@@ -158,6 +160,17 @@ function Example() {
         <button onClick={() => {
           requestFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60", 384, walletClient);
         }}>Run function WC</button>
+        <br />
+        <br />
+      
+        <button onClick={() => {
+          readResultFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+        }}>Read Result</button>
+
+        <br />
+        <button onClick={() => {
+          fundSubscriptionCall(384, 2);
+        }}>Fund Link</button>
     </>
   )
 }
