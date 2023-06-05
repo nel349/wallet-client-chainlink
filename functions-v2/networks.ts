@@ -5,7 +5,7 @@ export const networks = {
         accounts: [],
         verifyApiKey: "process.env.ETHERSCAN_API_KEY" || "UNSET",
         chainId: 11155111,
-        confirmations: "",
+        confirmations: 2,
         nativeCurrencySymbol: "ETH",
         linkToken: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
         linkPriceFeed: "0x42585eD362B3f1BCa95c640FdFf35Ef899212734",

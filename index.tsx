@@ -10,6 +10,7 @@ import FunctionButtonsComponent from './components/FunctionButtonsComponent'
 import { requestFunctionCall } from './functions-v2/request_new'
 import { readResultFunctionCall } from './functions-v2/readResultAndError'
 import { fundSubscriptionCall } from './functions-v2/fund_subscription'
+import { getSubscriptionBalanceCall } from './functions-v2/checkSubscriptionBalance'
 
 
 const currentChain = mainnet;
@@ -171,6 +172,11 @@ function Example() {
         <button onClick={() => {
           fundSubscriptionCall(384, 2);
         }}>Fund Link</button>
+
+        <br />
+        <button onClick={() => {
+          getSubscriptionBalanceCall(384);
+        }}>Subscription Balance</button>
     </>
   )
 }

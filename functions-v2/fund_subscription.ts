@@ -1,10 +1,10 @@
-import { Address, createPublicClient, createWalletClient, custom, http } from 'viem';
+import { Address, TransactionReceipt, createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters } from 'viem';
 import FunctionsBillingRegistry from '../build/artifacts/contracts/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json';
 import LinkTokenInterface from '../../build/artifacts/@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol/LinkTokenInterface.json';
 import { sepolia } from 'viem/chains';
 import { Chain, getContract } from 'viem';
 import FunctionsOracle from '../build/artifacts/contracts/dev/functions/FunctionsOracle.sol/FunctionsOracle.json';
-import { ethers, parseEther } from 'ethers';
+import { ethers, hexlify, parseEther } from 'ethers';
 import { networks } from './networks';
 
 const currentChain = sepolia as Chain;
@@ -23,9 +23,9 @@ const walletClient = createWalletClient({
 });
 
 export async function fundSubscriptionCall(subscriptionId: number, linkAmount: number) {
-
-
-    const FunctionsOracleContract = { address: networks.ethereumSepolia["functionsOracleProxy"] as Address, abi: FunctionsOracle.abi };
+    const FunctionsOracleContract =
+     { address: networks.ethereumSepolia["functionsOracleProxy"] as Address,
+      abi: FunctionsOracle.abi };
 
     // Get reigstry contract and address
     const registryAddress = await publicClient.readContract({
@@ -55,25 +55,24 @@ export async function fundSubscriptionCall(subscriptionId: number, linkAmount: n
     console.log(`Funding subscription ${subscriptionId} with ${ethers.formatEther(juelsAmount)} LINK`);
 
 
-    const linkContract = getContract({
+    const linkReadContract = getContract({
         address: networks.ethereumSepolia.linkToken as Address,
         abi: LinkTokenInterface.abi,
         publicClient,
     })
 
-    // const LinkTokenFactory = await ethers.getContractFactory("LinkToken")
-    // const linkToken = await LinkTokenFactory.attach(networks[network.name].linkToken)
-
-    // const accounts = await ethers.getSigners()
-    // const signer = accounts[0]
+    const linkWriteContract = getContract({
+        address: networks.ethereumSepolia.linkToken as Address,
+        abi: LinkTokenInterface.abi,
+        walletClient,
+    })
 
     // Ensure sufficient balance
-
     const currentAddress = (await walletClient.requestAddresses()).at(0);
 
     console.log("currentAddress:", currentAddress);
 
-    const balance = await linkContract.read.balanceOf([currentAddress]) as bigint;
+    const balance = await linkReadContract.read.balanceOf([currentAddress]) as bigint;
     console.log("balance:", ethers.formatEther(balance));
     if (juelsAmount > balance) {
         throw Error(
@@ -83,21 +82,38 @@ export async function fundSubscriptionCall(subscriptionId: number, linkAmount: n
         )
     }
 
-    // // Fund the subscription with LINK
-    // const fundTx = await linkToken.transferAndCall(
-    //     networks[network.name]["functionsBillingRegistryProxy"],
-    //     juelsAmount,
-    //     ethers.utils.defaultAbiCoder.encode(["uint64"], [subscriptionId])
-    // )
+    // Fund the subscription with LINK
+    console.log("subscriptionId:", subscriptionId);
 
-    // console.log(
-    //     `Waiting ${networks[network.name].confirmations} blocks for transaction ${fundTx.hash} to be confirmed...`
-    // )
-    // await fundTx.wait(networks[network.name].confirmations)
+    const subsc = BigInt(subscriptionId);
+    const encoded = encodeAbiParameters(
+        parseAbiParameters('uint64'),
+        [subsc]
+    )
+    console.log("encode:", encoded);
 
-    // const postSubInfo = await registry.getSubscription(subscriptionId)
+    let transaction: TransactionReceipt;
+    try {
+        console.log("juelsAmount:", juelsAmount);
+        const fundTx = await linkWriteContract.write.transferAndCall(
+            [
+                networks.ethereumSepolia.functionsBillingRegistryProxy,
+                juelsAmount,
+                encoded,
+            ]
+        )
+        transaction = await publicClient.waitForTransactionReceipt(
+            { hash: fundTx }
+        );
+        transaction.logs.forEach((log) => {
+            console.log(log);
+        });
 
-    // console.log(
-    //     `\nSubscription ${subscriptionId} has a total balance of ${ethers.utils.formatEther(postSubInfo[0])} LINK`
-    // )
+        console.log(
+            `Waiting ${networks.ethereumSepolia.confirmations} blocks for transaction ${fundTx} to be confirmed...`
+        )
+    } catch (error) {
+        console.error(`Transaction failed: ${error}`)
+    }
+
 }
