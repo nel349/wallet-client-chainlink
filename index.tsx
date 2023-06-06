@@ -9,6 +9,8 @@ import { readResultFunctionCall } from './functions-v2/readResultAndError'
 import { fundSubscriptionCall } from './functions-v2/fund_subscription'
 import { getSubscriptionBalanceCall } from './functions-v2/checkSubscriptionBalance'
 import { createSubscriptionCall } from './functions-v2/createSubscription'
+import { addConsumerToSubscriptionCall } from './functions-v2/addConsumer'
+import { removeConsumerToSubscriptionCall } from './functions-v2/removeConsumer'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const currentChain = mainnet;
@@ -179,6 +181,16 @@ function Example() {
       <button onClick={() => {
         createSubscriptionCall();
       }}>Create subscription</button>
+
+      <br />
+      <button onClick={() => {
+        addConsumerToSubscriptionCall(384, "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+      }}>Add consumer to Subscription</button>
+
+      <br />
+      <button onClick={() => {
+        removeConsumerToSubscriptionCall(384, "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+      }}>Remove consumer to Subscription</button>
     </>
   )
 }
