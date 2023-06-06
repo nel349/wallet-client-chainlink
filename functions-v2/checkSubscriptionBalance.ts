@@ -2,7 +2,7 @@ import { Address, formatUnits, getContract } from "viem";
 import { publicClient } from "./clients";
 import { FunctionsBillingRegistry, FunctionsOracleContract } from "./contracts";
 
-export async function getSubscriptionBalanceCall(subscriptionId: number) {
+export async function getSubscriptionBalanceCall(subscriptionId: string) {
     // Get reigstry contract and address
     const registryAddress = await publicClient.readContract({
         ...FunctionsOracleContract,

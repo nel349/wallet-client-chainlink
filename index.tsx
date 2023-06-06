@@ -4,15 +4,13 @@ import { Address, createWalletClient, custom, parseEther, getContract, createPub
 import { mainnet, polygonMumbai } from 'viem/chains'
 import 'viem/window'
 import { EtherscanApi } from './etherscan/service'
-import { parseAbi } from 'viem'
-import { ethers } from 'ethers'
-import FunctionButtonsComponent from './components/FunctionButtonsComponent'
 import { requestFunctionCall } from './functions-v2/request_new'
 import { readResultFunctionCall } from './functions-v2/readResultAndError'
 import { fundSubscriptionCall } from './functions-v2/fund_subscription'
 import { getSubscriptionBalanceCall } from './functions-v2/checkSubscriptionBalance'
+import { createSubscriptionCall } from './functions-v2/createSubscription'
 
-
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const currentChain = mainnet;
 const currentTestingContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 const currentTestUser = "0x9584DD0D9bA9d81103020281B77EA23cAaC4e3A4";
@@ -95,7 +93,7 @@ function Example() {
       //   console.log("Result:", data);
       // }
     });
-    
+
 
 
   }, []);
@@ -104,21 +102,6 @@ function Example() {
     const [address] = await walletClient.requestAddresses()
     setAccount(address)
   }
-
-
-
-  // const contract = getContract({
-  //   abi: contractAbi,
-  //   address: contractAddress,
-  //   walletClient
-  // }); 
-
-
-  // async function makeContractCall() {
-
-  //   const result = await contract.
-  //   console.log(result);
-  // }
 
   const sendTransaction = async () => {
     if (!account) {
@@ -145,42 +128,61 @@ function Example() {
     });
   }
 
+  const [subscriptionId, setSubscriptionId] = useState('');
 
-  if (account)
-    return (
-      <>
-        <div>Connected: {account}</div>
-        <button onClick={sendTransaction}>Send Transaction</button>
+  const handleSubscriptionIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSubscriptionId(event.target.value);
+  };
 
-      </>
-    )
+  const handleSubscriptionBalanceClick = () => {
+    // Handle subscription balance click here
+    getSubscriptionBalanceCall(subscriptionId);
+  };
+
+  
   return (
     <>
-        {/* <FunctionButtonsComponent requestType="functions-request" /> */}
+      {/* <FunctionButtonsComponent requestType="functions-request" /> */}
 
-        <button onClick={() => {
-          requestFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60", 384, walletClient);
-        }}>Run function WC</button>
-        <br />
-        <br />
-      
-        <button onClick={() => {
-          readResultFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
-        }}>Read Result</button>
+      <button onClick={() => {
+        requestFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60", 384, walletClient);
+      }}>Run function WC</button>
+      <br />
+      <br />
 
-        <br />
-        <button onClick={() => {
-          fundSubscriptionCall(384, 2);
-        }}>Fund Link</button>
+      <button onClick={() => {
+        readResultFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+      }}>Read Result</button>
 
-        <br />
-        <button onClick={() => {
-          getSubscriptionBalanceCall(384);
-        }}>Subscription Balance</button>
+      <br />
+      <button onClick={() => {
+        fundSubscriptionCall(384, 2);
+      }}>Fund Link</button>
+
+      <br />
+      {/* <button onClick={() => {
+        
+      }}>Subscription Balance</button> */}
+      <div>
+      <label htmlFor="subscriptionId">Subscription ID:</label>
+      <input
+        type="text"
+        id="subscriptionId"
+        name="subscriptionId"
+        value={subscriptionId}
+        onChange={handleSubscriptionIdChange}
+      />
+      <button onClick={handleSubscriptionBalanceClick}>Subscription Balance</button>
+    </div>
+
+      <br />
+      <button onClick={() => {
+        createSubscriptionCall();
+      }}>Create subscription</button>
     </>
   )
 }
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+root.render(
   <Example />,
 )

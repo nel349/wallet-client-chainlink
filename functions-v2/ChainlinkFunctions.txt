@@ -19,3 +19,11 @@ Can you create a component class that can be added to index.tsx such that if pas
 npx hardhat functions-sub-info --subid 384 --network ethereumSepolia
 
 npx hardhat functions-sub-fund --subid 384 --amount 10 --network ethereumSepolia
+
+
+
+my existing subscription ids created: 
+
+
+384
+419
