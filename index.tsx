@@ -11,6 +11,8 @@ import { getSubscriptionBalanceCall } from './functions-v2/checkSubscriptionBala
 import { createSubscriptionCall } from './functions-v2/createSubscription'
 import { addConsumerToSubscriptionCall } from './functions-v2/addConsumer'
 import { removeConsumerToSubscriptionCall } from './functions-v2/removeConsumer'
+import { transferOwnershipCall } from './functions-v2/transferSubscription'
+import { acceptOwnershipCall } from './functions-v2/acceptTransferOwnership'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const currentChain = mainnet;
@@ -191,6 +193,16 @@ function Example() {
       <button onClick={() => {
         removeConsumerToSubscriptionCall(384, "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
       }}>Remove consumer to Subscription</button>
+
+      <br />
+      <button onClick={() => {
+        transferOwnershipCall(419, "0xe119584dd81d99eff581AED4D22B962D6CbEB426");
+      }}>Transfer owner of subscription</button>
+
+      <br />
+      <button onClick={() => {
+        acceptOwnershipCall(419);
+      }}>Accept ownership of subscription</button>
     </>
   )
 }

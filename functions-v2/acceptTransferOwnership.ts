@@ -1,10 +1,8 @@
-import { Address, TransactionReceipt, formatUnits, getContract } from "viem";
+import { Address, TransactionReceipt, formatEther, formatUnits, getContract } from "viem";
 import { publicClient, walletClient } from "./clients";
 import { FunctionsBillingRegistry, FunctionsOracleContract } from "./contracts";
-import { networks } from "./networks";
-import { Hex } from "viem/src";
 
-export async function removeConsumerToSubscriptionCall(subscriptionId: number, consumerAddress: string) {
+export async function acceptOwnershipCall(subscriptionId: number) {
     // Get reigstry contract and address
     const isWalletAllowed = await publicClient.readContract({
         ...FunctionsOracleContract,
@@ -47,38 +45,38 @@ export async function removeConsumerToSubscriptionCall(subscriptionId: number, c
         throw error
     }
 
+
     const currentAddress = (await walletClient.requestAddresses()).at(0);
 
-    if (preSubInfo[1] !== currentAddress?.toString()) {
-        throw Error("The current wallet is not the owner of the subscription")
+    if (preSubInfo[1] === currentAddress?.toString()) {
+        throw Error("The current wallet is already the owner of the subscription")
     }
 
-    // Check that the consumer IS already authorized (for convenience)
-    const existingConsumers = preSubInfo[2].map((addr) => addr.toLowerCase());
-    console.log("existingConsumers:", existingConsumers);
-    if (!existingConsumers.includes(consumerAddress.toLowerCase())) {
-        throw Error(`Consumer ${consumerAddress} is NOT authorized to use subscription ${subscriptionId}`)
-    }
-
-
-    let rmTxReceipt: TransactionReceipt;
+    let acceptTxReceipt: TransactionReceipt;
 
     try {
-        console.log(`Removing consumer contract address ${consumerAddress} to subscription ${subscriptionId}`)
-        const rmTx = await registryWriteContract.write.removeConsumer([subscriptionId, consumerAddress]);
+        console.log(`Accepting ownership of subscription ${subscriptionId}`)
+        const acceptTx = await registryWriteContract.write.acceptSubscriptionOwnerTransfer([subscriptionId])
 
-        rmTxReceipt = await publicClient.waitForTransactionReceipt(
-            { hash: rmTx }
+        acceptTxReceipt = await publicClient.waitForTransactionReceipt(
+            { hash: acceptTx }
         );
 
-        console.log(`Consumer contract address ${consumerAddress} removed from subscription ${subscriptionId}`);
-
-        console.log(`Transaction hash: ${rmTxReceipt.transactionHash}`);
+        console.log(`Transaction hash: ${acceptTxReceipt.transactionHash}`);
+        console.log(`Ownership of subscription ${subscriptionId} transferred to ${currentAddress}`)
 
     } catch (error) {
-        console.error(`Transaction failed: ${error}`)
+        console.log(
+            `\nFailed to accept ownership. Ensure that a transfer has been requested by the previous owner ${preSubInfo[1]}`
+        )
     }
 
+        // Print information about the accepted subscription
+        let postSubInfo: any = await registryReadContract.read.getSubscription([subscriptionId]);
 
+        console.log(`\nSubscription ${subscriptionId} owner: ${postSubInfo[1]}`)
+        console.log(`Balance: ${formatEther(postSubInfo[0])} LINK`)
+        console.log(`${postSubInfo[2].length} authorized consumer contract${postSubInfo[2].length === 1 ? "" : "s"}:`)
+        console.log(postSubInfo[2])
 
 }
