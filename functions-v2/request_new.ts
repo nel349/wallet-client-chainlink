@@ -14,11 +14,7 @@ async function readFile(path: string): Promise<string> {
   return text;
 }
 
-
 const currentChain = sepolia as Chain;
-const currentTestingContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-const currentTestUser = "0x9584DD0D9bA9d81103020281B77EA23cAaC4e3A4";
-
 const [account] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
 
 const walletClient = createWalletClient({
@@ -32,14 +28,9 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-
-
-
 export async function requestFunctionCall(contractAddr: string, subscriptionId: number, wallet: any) {
 
   const FunctionsOracleContract = { address: networks.ethereumSepolia["functionsOracleProxy"] as Address, abi: FunctionsOracle.abi };
-  const FunctionsConsumerContract = { address: contractAddr, abi: FunctionsConsumer.abi };
-
 
   // Get reigstry contract and address
   const registryAddress = await publicClient.readContract({

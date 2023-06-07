@@ -3,6 +3,15 @@ import { publicClient } from "./clients";
 import { FunctionsBillingRegistry, FunctionsOracleContract } from "./contracts";
 
 export async function getSubscriptionBalanceCall(subscriptionId: string) {
+    let subInfo = getSubscriptionInfo(subscriptionId);
+    const subBalanceInJules = subInfo[0];
+    const linkBalance = formatUnits(subBalanceInJules, 18);
+  
+    console.log(`The subscription has a balance of ${linkBalance} LINK`);
+    return linkBalance;
+}   
+
+export async function getSubscriptionInfo(subscriptionId: string) {
     // Get reigstry contract and address
     const registryAddress = await publicClient.readContract({
         ...FunctionsOracleContract,
@@ -26,10 +35,5 @@ export async function getSubscriptionBalanceCall(subscriptionId: string) {
         }
         throw error
     }
-
-    const subBalanceInJules = subInfo[0];
-    const linkBalance = formatUnits(subBalanceInJules, 18);
-  
-    console.log(`The subscription has a balance of ${linkBalance} LINK`);
-
-}
+    return subInfo;
+}   

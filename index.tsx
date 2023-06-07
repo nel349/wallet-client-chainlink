@@ -4,15 +4,8 @@ import { Address, createWalletClient, custom, parseEther, getContract, createPub
 import { mainnet, polygonMumbai } from 'viem/chains'
 import 'viem/window'
 import { EtherscanApi } from './etherscan/service'
-import { requestFunctionCall } from './functions-v2/request_new'
-import { readResultFunctionCall } from './functions-v2/readResultAndError'
-import { fundSubscriptionCall } from './functions-v2/fund_subscription'
-import { getSubscriptionBalanceCall } from './functions-v2/checkSubscriptionBalance'
-import { createSubscriptionCall } from './functions-v2/createSubscription'
-import { addConsumerToSubscriptionCall } from './functions-v2/addConsumer'
-import { removeConsumerToSubscriptionCall } from './functions-v2/removeConsumer'
-import { transferOwnershipCall } from './functions-v2/transferSubscription'
-import { acceptOwnershipCall } from './functions-v2/acceptTransferOwnership'
+import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, getLatestResponse, getSubscriptionBalanceCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall } from './functions-v2'
+export * from './functions-v2'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const currentChain = mainnet;
@@ -22,11 +15,6 @@ const currentTestUser = "0x9584DD0D9bA9d81103020281B77EA23cAaC4e3A4";
 const walletClient = createWalletClient({
   chain: currentChain,
   transport: custom(window.ethereum!),
-})
-
-const publicClient = createPublicClient({
-  chain: currentChain,
-  transport: http()
 })
 
 function Example() {
@@ -155,7 +143,7 @@ function Example() {
       <br />
 
       <button onClick={() => {
-        readResultFunctionCall("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+        getLatestResponse("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
       }}>Read Result</button>
 
       <br />

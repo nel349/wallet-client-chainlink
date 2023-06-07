@@ -1,8 +1,6 @@
 import { Address, TransactionReceipt, formatUnits, getContract } from "viem";
 import { publicClient, walletClient } from "./clients";
 import { FunctionsBillingRegistry, FunctionsOracleContract } from "./contracts";
-import { networks } from "./networks";
-import { Hex } from "viem/src";
 
 export async function addConsumerToSubscriptionCall(subscriptionId: number, consumerAddress: string) {
     // Get reigstry contract and address

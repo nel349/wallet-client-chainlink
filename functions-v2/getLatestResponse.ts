@@ -19,7 +19,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-export async function readResultFunctionCall(contractAddr: string) {
+export async function getLatestResponse(contractAddr: string) {
 
   const clientContract = getContract({
     address: contractAddr as Address,
