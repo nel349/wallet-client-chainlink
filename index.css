@@ -46,21 +46,23 @@
   button {
     font-size: 1.25rem;
     padding: 0.75rem 1.5rem;
-    background-color: #20bf55;
+    background: linear-gradient(145deg, #375bd2, #1c3faa);
     border: none;
     border-radius: 0.5rem;
     color: #ffffff;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 5px 5px 15px #1c3faa, -5px -5px 15px #4b6fea;
   }
   
   button:hover {
-    background-color: #168f48;
+    background: linear-gradient(145deg, #1c3faa, #375bd2);
     transform: scale(1.05);
   }
   
   button:active {
     transform: scale(1);
+    box-shadow: inset 1px 1px 2px #1c3faa, inset -1px -1px 2px #4b6fea;
   }
   
   @media (prefers-color-scheme: dark) {
