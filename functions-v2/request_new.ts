@@ -6,6 +6,7 @@ import FunctionsBillingRegistry from '../build/artifacts/contracts/dev/functions
 import { ethers } from 'ethers';
 import { Chain } from 'viem/src';
 import { networks } from './networks';
+import fetch from 'cross-fetch';
 
 
 async function readFile(path: string): Promise<string> {
@@ -48,13 +49,13 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
   })
 
   // Check that the subscription is valid
-  let subInfo
+  let subInfo: any;
   try {
     subInfo = await registryContract.read.getSubscription([subscriptionId]);
 
 
     console.log("subInfo:", subInfo)
-  } catch (error) {
+  } catch (error: any) {
     if (error.errorName === "InvalidSubscription") {
       throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
     }
@@ -63,7 +64,7 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
 
 
   // Validate the client contract has been authorized to use the subscription
-  const existingConsumers = subInfo[2].map((addr) => addr.toLowerCase())
+  const existingConsumers = subInfo[2].map((addr: string) => addr.toLowerCase())
   if (!existingConsumers.includes(contractAddr.toLowerCase())) {
     throw Error(`Consumer contract ${contractAddr} is not registered to use subscription ${subscriptionId}`)
   }
@@ -160,7 +161,7 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
     );
 
     console.log("requestTx:", requestTx);
-  } catch (error) {
+  } catch (error: any) {
     throw Error(`Could not initiate request: ${error.message}`);
   }
 
