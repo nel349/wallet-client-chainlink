@@ -125,31 +125,11 @@ export function Example() {
         <br />
         <br />
 
-         <button onClick={() => {
-        }}>Read Result</button>
-  
-        <button onClick={() => {
-          getLatestResponse("0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
-        }}>Read Result</button>
-  
         <br />
         <button onClick={() => {
           fundSubscriptionCall(384, 2);
         }}>Fund Link</button>
-  
-        <br />
-        <div>
-          <label htmlFor="subscriptionId">Subscription ID:</label>
-          <input
-            type="text"
-            id="subscriptionId"
-            name="subscriptionId"
-            value={subscriptionId}
-            onChange={handleSubscriptionIdChange}
-          />
-          <button onClick={handleSubscriptionBalanceClick}>Subscription Balance</button>
-        </div>
-  
+
         <br />
         <button onClick={() => {
           createSubscriptionCall();
