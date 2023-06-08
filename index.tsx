@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import 'viem/window'
 import HeroSection from './components/HeroSection';
-import { ExecutionType } from './components/ExecutionButtons';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -14,7 +13,3 @@ console.log("executionTypeParam: ", executionTypeParam);
 root.render(
   <HeroSection executionType={executionTypeParam} otherParameter={otherParameter} />
 )
-
-// function toPascalCase(str: string): string {
-//   return str.replace(/(\w)(\w*)/g, (_, firstChar, rest) => firstChar.toUpperCase() + rest.toLowerCase());
-// }

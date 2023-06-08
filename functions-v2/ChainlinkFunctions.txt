@@ -25,6 +25,21 @@ npx hardhat functions-sub-fund --subid 384 --amount 10 --network ethereumSepolia
 my existing subscription ids created: 
 384
 419
+447
 
 current consumer addresses:
 0xf4C1B1B5f4885588f25231075D896Cf8D2946d60
+
+
+    getLatestResponseRequest:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          type: string
+          description: Address of consumer contract Chainlink function.
+          required: true
+    getLatestResponseResponse:
+      type: string
+      description: Latest response of the given consumer contract.

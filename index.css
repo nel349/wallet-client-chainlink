@@ -41,6 +41,9 @@
   .hero-description {
     font-size: 1.5rem;
     margin-bottom: 2rem;
+    max-width: 600px; /* or whatever maximum width you want */
+    margin-left: auto;
+    margin-right: auto;
   }
   
   button {
