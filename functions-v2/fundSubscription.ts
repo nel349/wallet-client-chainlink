@@ -1,6 +1,6 @@
 import { Address, TransactionReceipt, createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters } from 'viem';
 import FunctionsBillingRegistry from '../build/artifacts/contracts/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json';
-import LinkTokenInterface from '../../build/artifacts/@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol/LinkTokenInterface.json';
+import LinkTokenInterface from '../build/artifacts/@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol/LinkTokenInterface.json';
 import { sepolia } from 'viem/chains';
 import { Chain, getContract } from 'viem';
 import FunctionsOracle from '../build/artifacts/contracts/dev/functions/FunctionsOracle.sol/FunctionsOracle.json';
