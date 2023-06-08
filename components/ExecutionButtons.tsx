@@ -27,7 +27,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         setState("Running...");
         const result = await callback();
         setResult(result);
-        setState("Success");
+        setState("Completed");
       } catch (error) {
         setState("Error");
         setResult(error.message);
@@ -63,8 +63,12 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         });
     };
 
-    const removeConsumerToSubscriptionCallExecution = async () => {
-        removeConsumerToSubscriptionCall(384, "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+    const removeConsumerToSubscriptionCallExecution = async (subid: number, address: string) => {
+        handleButtonClick(async () => {
+            const result = await removeConsumerToSubscriptionCall(subid, address);
+            return JSON.stringify(result);
+        });
+        
     };
 
     const transferOwnershipCallExecution = async () => {
@@ -110,7 +114,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
             {executionType === ExecutionType.RemoveConsumerToSubscriptionCall && (
                 <>
-                    <button onClick={removeConsumerToSubscriptionCallExecution}>Remove Consumer to Subscription</button>
+                    <button onClick={() => removeConsumerToSubscriptionCallExecution(props.subscriptionId, props.consumerAddress)}>Remove Consumer to Subscription</button>
                     <br />
                 </>
             )}
@@ -129,8 +133,12 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
                 </>
             )}
 
-        <p>State: {state}</p>
-        <p>Result: {result}</p>
+            {/* Wrap the following content inside a container and center it */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <p>State: {state}</p>
+                <p>Result:</p>
+                {result}
+            </div>
         </div>
     );
 };

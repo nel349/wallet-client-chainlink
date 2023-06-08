@@ -57,7 +57,8 @@ export async function removeConsumerToSubscriptionCall(subscriptionId: number, c
     const existingConsumers = preSubInfo[2].map((addr) => addr.toLowerCase());
     console.log("existingConsumers:", existingConsumers);
     if (!existingConsumers.includes(consumerAddress.toLowerCase())) {
-        throw Error(`Consumer ${consumerAddress} is NOT authorized to use subscription ${subscriptionId}`)
+        // console.log(`Consumer ${consumerAddress} is NOT authorized to use subscription ${subscriptionId}`)
+        return { error: `Error: Consumer ${consumerAddress} is NOT authorized to use subscription ${subscriptionId}`}
     }
 
 
@@ -75,10 +76,17 @@ export async function removeConsumerToSubscriptionCall(subscriptionId: number, c
 
         console.log(`Transaction hash: ${rmTxReceipt.transactionHash}`);
 
+        return {
+            message: `Consumer contract address ${consumerAddress} removed from subscription ${subscriptionId}`,
+            transactionHash: rmTxReceipt.transactionHash
+        }
+
     } catch (error) {
         console.error(`Transaction failed: ${error}`)
+        return {
+            error: `Transaction failed: ${error}`
+        }
     }
-
 
 
 }

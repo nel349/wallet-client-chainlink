@@ -16,6 +16,5 @@ root.render(
     executionType={executionTypeParam}
     subscriptionId={subscriptionId}
     consumerAddress={consumerAddress}
-
   />
 )
