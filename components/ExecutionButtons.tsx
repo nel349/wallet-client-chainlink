@@ -46,7 +46,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             }
         } catch (error) {
             setState("Error");
-            toast.error("error.message");
+            toast.error(error.message);
             setResult(error.message);
         }
     };
@@ -102,11 +102,12 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         handleButtonClick(async () => {
             return await transferOwnershipCall(subid, newOwnerAddress);
         });
-        
     };
 
-    const acceptOwnershipCallExecution = async () => {
-        acceptOwnershipCall(419);
+    const acceptOwnershipCallExecution = async (subid: number) => {
+        handleButtonClick(async () => {
+            return await acceptOwnershipCall(subid);
+        });
     };
 
     return (
@@ -162,7 +163,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
             {executionType === ExecutionType.AcceptOwnershipCall && (
                 <>
-                    <button onClick={acceptOwnershipCallExecution}>Accept Ownership</button>
+                    <button onClick={ () => acceptOwnershipCallExecution(props.subscriptionId) }>Accept Ownership</button>
                     <br />
                 </>
             )}

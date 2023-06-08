@@ -91,7 +91,7 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
 
         return {
             message: resultMessage,
-            transferTxReceipt
+            hash: transferTxReceipt.transactionHash
         }
  
 

@@ -10,9 +10,9 @@ export async function acceptOwnershipCall(subscriptionId: number) {
     });
 
     if (!isWalletAllowed) {
-        return console.log(
-            "\nChainlink Functions is currently in a closed testing phase.\nFor access sign up here:\nhttps://functions.chain.link"
-        )
+        const resultMessage = `Error: Chainlink Functions is currently in a closed testing phase.\nFor access sign up here:\nhttps://functions.chain.link`;
+        console.log(resultMessage)
+        return { message: resultMessage }
     }
 
     // Get reigstry contract and address
@@ -34,13 +34,17 @@ export async function acceptOwnershipCall(subscriptionId: number) {
     })
 
     // Check that the subscription is valid
-    let preSubInfo
+    let preSubInfo: any
     try {
         preSubInfo = await registryReadContract.read.getSubscription([subscriptionId]);
         console.log("preSubInfo:" , preSubInfo);
-    } catch (error) {
+    } catch (error: any) {
         if (error.errorName === "InvalidSubscription") {
-            throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
+            const resultMessage = `Error: Subscription ID "${subscriptionId}" is invalid or does not exist`;
+            console.log(resultMessage);
+            return {
+                message: resultMessage
+            }
         }
         throw error
     }
@@ -49,7 +53,9 @@ export async function acceptOwnershipCall(subscriptionId: number) {
     const currentAddress = (await walletClient.requestAddresses()).at(0);
 
     if (preSubInfo[1] === currentAddress?.toString()) {
-        throw Error("The current wallet is already the owner of the subscription")
+        const resultMessage = `Error: The current wallet is already the owner of the subscription`;
+        console.log(resultMessage);
+        return { message: resultMessage }
     }
 
     let acceptTxReceipt: TransactionReceipt;
@@ -63,13 +69,7 @@ export async function acceptOwnershipCall(subscriptionId: number) {
         );
 
         console.log(`Transaction hash: ${acceptTxReceipt.transactionHash}`);
-        console.log(`Ownership of subscription ${subscriptionId} transferred to ${currentAddress}`)
 
-    } catch (error) {
-        console.log(
-            `\nFailed to accept ownership. Ensure that a transfer has been requested by the previous owner ${preSubInfo[1]}`
-        )
-    }
 
         // Print information about the accepted subscription
         let postSubInfo: any = await registryReadContract.read.getSubscription([subscriptionId]);
@@ -78,5 +78,25 @@ export async function acceptOwnershipCall(subscriptionId: number) {
         console.log(`Balance: ${formatEther(postSubInfo[0])} LINK`)
         console.log(`${postSubInfo[2].length} authorized consumer contract${postSubInfo[2].length === 1 ? "" : "s"}:`)
         console.log(postSubInfo[2])
+
+        const resultMessage = `Ownership of subscription ${subscriptionId} transferred to ${currentAddress}`;
+        console.log(resultMessage)
+
+        return {
+            hash: acceptTxReceipt.transactionHash,
+            message: resultMessage,
+            subscriptionId: subscriptionId,
+        }
+
+    } catch (error: any) {
+        console.log(
+            `\nFailed to accept ownership. Ensure that a transfer has been requested by the previous owner ${preSubInfo[1]}`
+        )
+        return {
+            message: `Error: Failed to accept ownership.
+             Ensure that a transfer has been requested by the previous owner ${preSubInfo[1]}
+              ${error.message}`
+        }
+    }
 
 }
