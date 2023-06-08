@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall, walletClient } from "../functions-v2";
-import { Address } from "viem";
+import { Address, TransactionExecutionError } from "viem";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
     executionType: ExecutionType;
     [key: string]: any; // Allow arbitrary props
-  };
+};
 
 export enum ExecutionType {
     RequestFunctionCall = "requestFunctionCall",
@@ -21,17 +23,36 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
     const [state, setState] = useState("");
     const [result, setResult] = useState("");
-  
-    const handleButtonClick = async (callback: () => Promise<string>) => {
-      try {
-        setState("Running...");
-        const result = await callback();
-        setResult(result);
-        setState("Completed");
-      } catch (error) {
-        setState("Error");
-        setResult(error.message);
-      }
+
+    const handleButtonClick = async (callback: () => Promise<any>) => {
+        try {
+            setState("Running...");
+            const result = await callback();
+            const strResult = JSON.stringify(result);
+            setResult(strResult);
+            setState("Completed");
+            if (result instanceof Error ||
+                result instanceof TransactionExecutionError ||
+                containsError(result)
+            ) {
+                // Display an error toast
+                console.log("result: ", strResult);
+                toast.error(strResult);
+            } else {
+                // Display a success toast
+                // TODO: Is not working
+                toast.success('Success!');
+            }
+        } catch (error) {
+            setState("Error");
+            toast.error(error.message);
+            setResult(error.message);
+        }
+    };
+
+    const containsError = (result: any) => {
+        return typeof result === 'string' &&
+            (result.includes("Error") || result.includes("error") || result.includes("ERROR"));
     };
 
     const requestFunctionCallExecution = async () => {
@@ -39,13 +60,13 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60",
             384,
             walletClient
-          );
+        );
     };
 
     const fundSubscriptionCallExecution = async (subid: number, amount: number) => {
         handleButtonClick(async () => {
-            const result = await fundSubscriptionCall(subid, amount);
-            return (result as string | undefined)?.toString() ?? "";
+            // const result = 
+            return await fundSubscriptionCall(subid, amount);
         });
     };
 
@@ -68,7 +89,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             const result = await removeConsumerToSubscriptionCall(subid, address);
             return JSON.stringify(result);
         });
-        
+
     };
 
     const transferOwnershipCallExecution = async () => {
@@ -83,17 +104,17 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         <div>
             {executionType === ExecutionType.RequestFunctionCall && (
                 <>
-                <button onClick={requestFunctionCallExecution}>
-                    Send Request Function Call (Example)
-                </button>
-                <br />
-                <br />
+                    <button onClick={requestFunctionCallExecution}>
+                        Send Request Function Call (Example)
+                    </button>
+                    <br />
+                    <br />
                 </>
             )}
 
             {executionType === ExecutionType.FundSubscriptionCall && (
                 <>
-                    <button onClick={() => fundSubscriptionCallExecution(419, 1)}>Fund Subscription</button>
+                    <button onClick={() => fundSubscriptionCallExecution(props.subscriptionId, props.amount)}>Fund Subscription</button>
                     <br />
                 </>
             )}

@@ -22,7 +22,7 @@ const walletClient = createWalletClient({
     account: account,
 });
 
-export async function fundSubscriptionCall(subscriptionId: number, linkAmount: number) {
+export async function fundSubscriptionCall(subscriptionId: number, linkAmount: number): Promise<any> {
     const FunctionsOracleContract =
      { address: networks.ethereumSepolia["functionsOracleProxy"] as Address,
       abi: FunctionsOracle.abi };
@@ -75,11 +75,11 @@ export async function fundSubscriptionCall(subscriptionId: number, linkAmount: n
     const balance = await linkReadContract.read.balanceOf([currentAddress]) as bigint;
     console.log("balance:", ethers.formatEther(balance));
     if (juelsAmount > balance) {
-        throw Error(
-            `Insufficient LINK balance. Trying to fund subscription with ${ethers.formatEther(
+        return {
+            message: `Error: Insufficient LINK balance. Trying to fund subscription with ${ethers.formatEther(
                 juelsAmount
             )} LINK, but wallet only has ${ethers.formatEther(balance)}.`
-        )
+        } 
     }
 
     // Fund the subscription with LINK
@@ -112,6 +112,16 @@ export async function fundSubscriptionCall(subscriptionId: number, linkAmount: n
         console.log(
             `Waiting ${networks.ethereumSepolia.confirmations} blocks for transaction ${fundTx} to be confirmed...`
         )
+
+        const postbalance = await linkReadContract.read.balanceOf([currentAddress]) as bigint;
+        const postbalanceLink = ethers.formatEther(postbalance);
+        return {
+            message: `Funded subscription ${subscriptionId} with ${ethers.formatEther(juelsAmount)} LINK`,
+            preBalance: ethers.formatEther(balance), //Balance before transaction
+            currentLinkBalance: postbalanceLink,
+            transactionHash: transaction.transactionHash,
+            subscriptionId: subscriptionId,
+        }
     } catch (error) {
         console.error(`Transaction failed: ${error}`)
     }

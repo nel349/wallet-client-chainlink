@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExecutionButtons, ExecutionType } from './ExecutionButtons';
+import { ExecutionButtons } from './ExecutionButtons';
 
 type HeroSectionProps = Record<string, any>;
 
@@ -11,6 +11,7 @@ const HeroSection: React.FC<HeroSectionProps> = (props: any) => (
       <div>
         {props.subscriptionId && <p>Subscription id: {props.subscriptionId}</p>}
         {props.consumerAddress && <p>Consumer address: {props.consumerAddress}</p>}
+        {props.amount && <p>Amount: {props.amount}</p>}
     </div>
       <ExecutionButtons 
         executionType={props.executionType as string}

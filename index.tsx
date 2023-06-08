@@ -9,6 +9,7 @@ const searchParams = new URLSearchParams(window.location.search);
 const executionTypeParam = searchParams.get('executionType') ?? "";
 const subscriptionId = searchParams.get('subscriptionId');
 const consumerAddress = searchParams.get('consumerAddress');
+const amount = searchParams.get('amount');
 console.log("executionTypeParam: ", executionTypeParam);
 
 root.render(
@@ -16,5 +17,6 @@ root.render(
     executionType={executionTypeParam}
     subscriptionId={subscriptionId}
     consumerAddress={consumerAddress}
+    amount={amount}
   />
 )
