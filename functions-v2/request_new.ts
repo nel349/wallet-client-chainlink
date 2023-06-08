@@ -6,8 +6,6 @@ import FunctionsBillingRegistry from '../build/artifacts/contracts/dev/functions
 import { ethers } from 'ethers';
 import { Chain } from 'viem/src';
 import { networks } from './networks';
-import fetch from 'cross-fetch';
-
 
 async function readFile(path: string): Promise<string> {
   const response = await fetch(path);
