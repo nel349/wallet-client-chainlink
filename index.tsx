@@ -10,6 +10,7 @@ const executionTypeParam = searchParams.get('executionType') ?? "";
 const subscriptionId = searchParams.get('subscriptionId');
 const consumerAddress = searchParams.get('consumerAddress');
 const amount = searchParams.get('amount');
+const newOwnerAddress = searchParams.get('newOwnerAddress');
 console.log("executionTypeParam: ", executionTypeParam);
 
 root.render(
@@ -18,5 +19,6 @@ root.render(
     subscriptionId={subscriptionId}
     consumerAddress={consumerAddress}
     amount={amount}
+    newOwnerAddress={newOwnerAddress}
   />
 )

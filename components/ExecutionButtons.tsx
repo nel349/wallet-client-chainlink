@@ -65,7 +65,6 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
     const fundSubscriptionCallExecution = async (subid: number, amount: number) => {
         handleButtonClick(async () => {
-            // const result = 
             return await fundSubscriptionCall(subid, amount);
         });
     };
@@ -89,11 +88,13 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             const result = await removeConsumerToSubscriptionCall(subid, address);
             return JSON.stringify(result);
         });
-
     };
 
-    const transferOwnershipCallExecution = async () => {
-        transferOwnershipCall(419, "0xe119584dd81d99eff581AED4D22B962D6CbEB426");
+    const transferOwnershipCallExecution = async (subid: number, newOwnerAddress: string) => {
+        handleButtonClick(async () => {
+            return await transferOwnershipCall(subid, newOwnerAddress);
+        });
+        
     };
 
     const acceptOwnershipCallExecution = async () => {
@@ -135,14 +136,18 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
             {executionType === ExecutionType.RemoveConsumerToSubscriptionCall && (
                 <>
-                    <button onClick={() => removeConsumerToSubscriptionCallExecution(props.subscriptionId, props.consumerAddress)}>Remove Consumer to Subscription</button>
+                    <button onClick={
+                        () => removeConsumerToSubscriptionCallExecution(props.subscriptionId, props.consumerAddress)
+                    }>Remove Consumer to Subscription</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.TransferOwnershipCall && (
                 <>
-                    <button onClick={transferOwnershipCallExecution}>Transfer Ownership</button>
+                    <button onClick={() => 
+                        transferOwnershipCallExecution(props.subscriptionId, props.newOwnerAddress)
+                    }>Transfer Ownership</button>
                     <br />
                 </>
             )}

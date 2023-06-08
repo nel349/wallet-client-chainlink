@@ -12,6 +12,7 @@ const HeroSection: React.FC<HeroSectionProps> = (props: any) => (
         {props.subscriptionId && <p>Subscription id: {props.subscriptionId}</p>}
         {props.consumerAddress && <p>Consumer address: {props.consumerAddress}</p>}
         {props.amount && <p>Amount: {props.amount}</p>}
+        {props.newOwnerAddress && <p>New owner address: {props.newOwnerAddress}</p>}
     </div>
       <ExecutionButtons 
         executionType={props.executionType as string}

@@ -1,4 +1,4 @@
-import { Address, TransactionReceipt, formatUnits, getContract } from "viem";
+import { Address, TransactionReceipt, getContract } from "viem";
 import { publicClient, walletClient } from "./clients";
 import { FunctionsBillingRegistry, FunctionsOracleContract } from "./contracts";
 
@@ -18,9 +18,11 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
     });
 
     if (!isWalletAllowed) {
-        return console.log(
-            "\nChainlink Functions is currently in a closed testing phase.\nFor access sign up here:\nhttps://functions.chain.link"
-        )
+        const resultMessage = `Error: Chainlink Functions is currently in a closed testing phase.\nFor access sign up here:\nhttps://functions.chain.link`;
+        console.log(resultMessage);
+        return {
+            message: resultMessage
+        }
     }
 
     // Get reigstry contract and address
@@ -42,13 +44,16 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
     })
 
     // Check that the subscription is valid
-    let preSubInfo
+    let preSubInfo: any
     try {
         preSubInfo = await registryReadContract.read.getSubscription([subscriptionId]);
         console.log("preSubInfo:" , preSubInfo);
-    } catch (error) {
+    } catch (error: any) {
         if (error.errorName === "InvalidSubscription") {
-            throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
+            // throw Error(`Subscription ID "${subscriptionId}" is invalid or does not exist`)
+            return {
+                message: `Error: Subscription ID "${subscriptionId}" is invalid or does not exist`
+            }
         }
         throw error
     }
@@ -57,7 +62,11 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
     const currentAddress = (await walletClient.requestAddresses()).at(0);
 
     if (preSubInfo[1] !== currentAddress?.toString()) {
-        throw Error("The current wallet is not the owner of the subscription")
+        // throw Error("The current wallet is not the owner of the subscription")
+        return {
+            message: `Error: The current wallet is not the owner of the subscription`
+        }
+
     }
 
 
@@ -76,11 +85,14 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
 
         console.log(`Transaction hash: ${transferTxReceipt.transactionHash}`);
 
+        const resultMessage = `Ownership transfer to ${newOwner} requested for subscription ${subscriptionId}.
+        \nThe new owner must now accept the transfer request.`;
+        console.log(resultMessage);
 
-        console.log(
-            `\nOwnership transfer to ${newOwner} requested for subscription ${subscriptionId}.  The new owner must now accept the transfer request.`
-          )
-
+        return {
+            message: resultMessage,
+            transferTxReceipt
+        }
  
 
     } catch (error) {
