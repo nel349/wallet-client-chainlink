@@ -7,9 +7,15 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 const searchParams = new URLSearchParams(window.location.search);
 const executionTypeParam = searchParams.get('executionType') ?? "";
-const otherParameter = searchParams.get('otherParameter');
+const subscriptionId = searchParams.get('subscriptionId');
+const consumerAddress = searchParams.get('consumerAddress');
 console.log("executionTypeParam: ", executionTypeParam);
 
 root.render(
-  <HeroSection executionType={executionTypeParam} otherParameter={otherParameter} />
+  <HeroSection 
+    executionType={executionTypeParam}
+    subscriptionId={subscriptionId}
+    consumerAddress={consumerAddress}
+
+  />
 )

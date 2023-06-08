@@ -45,8 +45,6 @@ export async function addConsumerToSubscriptionCall(subscriptionId: number, cons
         throw error
     }
 
-    const [account] = await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
-
     const currentAddress = (await walletClient.requestAddresses()).at(0);
 
     if (preSubInfo[1] !== currentAddress?.toString()) {
@@ -78,16 +76,19 @@ export async function addConsumerToSubscriptionCall(subscriptionId: number, cons
           // Print information about the subscription
         const postSubInfo : any = await registryReadContract.read.getSubscription([subscriptionId]);
 
+        const resultMessage = `${postSubInfo[2].length} authorized consumer contract${
+            postSubInfo[2].length === 1 ? "" : "s"
+            } for subscription ${subscriptionId}:`;
         if (postSubInfo[2]?.length !== 0) {
-            console.log(
-                `${postSubInfo[2].length} authorized consumer contract${
-                postSubInfo[2].length === 1 ? "" : "s"
-                } for subscription ${subscriptionId}:`
-            )
+            console.log(resultMessage)
             console.log(postSubInfo[2]);
         }
 
- 
+        return {
+            message: `Consumer contract address ${consumerAddress} added to subscription ${subscriptionId}`,
+            transactionHash: addTxReceipt.transactionHash,
+            consumers: postSubInfo.toString(), 
+        }
 
     } catch (error) {
         console.error(`Transaction failed: ${error}`)

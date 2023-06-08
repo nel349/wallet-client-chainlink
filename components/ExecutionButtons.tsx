@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall, walletClient } from "../functions-v2";
+import { Address } from "viem";
 
 type Props = {
-    executionType: string;
-}
+    executionType: ExecutionType;
+    [key: string]: any; // Allow arbitrary props
+  };
 
 export enum ExecutionType {
     RequestFunctionCall = "requestFunctionCall",
@@ -15,7 +17,7 @@ export enum ExecutionType {
     AcceptOwnershipCall = "acceptOwnershipCall",
 };
 
-export const ExecutionButtons = ({ executionType }: Props) => {
+export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
     const [state, setState] = useState("");
     const [result, setResult] = useState("");
@@ -48,16 +50,17 @@ export const ExecutionButtons = ({ executionType }: Props) => {
     };
 
     const createSubscriptionCallExecution = async () => {
-
         handleButtonClick(async () => {
             const result = await createSubscriptionCall();
             return (result as string | undefined)?.toString() ?? "";
         });
-        
     };
 
-    const addConsumerToSubscriptionCallExecution = async () => {
-        addConsumerToSubscriptionCall(384, "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60");
+    const addConsumerToSubscriptionCallExecution = async (subid: number, address: Address) => {
+        handleButtonClick(async () => {
+            const result = await addConsumerToSubscriptionCall(subid, address);
+            return JSON.stringify(result);
+        });
     };
 
     const removeConsumerToSubscriptionCallExecution = async () => {
@@ -77,7 +80,7 @@ export const ExecutionButtons = ({ executionType }: Props) => {
             {executionType === ExecutionType.RequestFunctionCall && (
                 <>
                 <button onClick={requestFunctionCallExecution}>
-                    Run function WC
+                    Send Request Function Call (Example)
                 </button>
                 <br />
                 <br />
@@ -86,42 +89,42 @@ export const ExecutionButtons = ({ executionType }: Props) => {
 
             {executionType === ExecutionType.FundSubscriptionCall && (
                 <>
-                    <button onClick={() => fundSubscriptionCallExecution(419, 1)}>Fund Link</button>
+                    <button onClick={() => fundSubscriptionCallExecution(419, 1)}>Fund Subscription</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.CreateSubscriptionCall && (
                 <>
-                    <button onClick={createSubscriptionCallExecution}>Create subscription</button>
+                    <button onClick={createSubscriptionCallExecution}>Create Subscription</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.AddConsumerToSubscriptionCall && (
                 <>
-                    <button onClick={addConsumerToSubscriptionCallExecution}>Add consumer to Subscription</button>
+                    <button onClick={() => addConsumerToSubscriptionCallExecution(props.subscriptionId, props.consumerAddress)}>Add Consumer to Subscription</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.RemoveConsumerToSubscriptionCall && (
                 <>
-                    <button onClick={removeConsumerToSubscriptionCallExecution}>Remove consumer to Subscription</button>
+                    <button onClick={removeConsumerToSubscriptionCallExecution}>Remove Consumer to Subscription</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.TransferOwnershipCall && (
                 <>
-                    <button onClick={transferOwnershipCallExecution}>Transfer owner of subscription</button>
+                    <button onClick={transferOwnershipCallExecution}>Transfer Ownership</button>
                     <br />
                 </>
             )}
 
             {executionType === ExecutionType.AcceptOwnershipCall && (
                 <>
-                    <button onClick={acceptOwnershipCallExecution}>Accept ownership of subscription</button>
+                    <button onClick={acceptOwnershipCallExecution}>Accept Ownership</button>
                     <br />
                 </>
             )}
