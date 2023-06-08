@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall, walletClient } from "../functions-v2";
 import { Address, TransactionExecutionError } from "viem";
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
@@ -37,6 +37,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             ) {
                 // Display an error toast
                 console.log("result: ", strResult);
+                setState("Error");
                 toast.error(strResult);
             } else {
                 // Display a success toast
@@ -45,14 +46,21 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             }
         } catch (error) {
             setState("Error");
-            toast.error(error.message);
+            toast.error("error.message");
             setResult(error.message);
         }
     };
 
     const containsError = (result: any) => {
-        return typeof result === 'string' &&
-            (result.includes("Error") || result.includes("error") || result.includes("ERROR"));
+        const {message} = result;
+        const includesError = (message: string | string[]) => {
+            return message.includes("Error") || message.includes("error") || message.includes("ERROR");
+        };
+        if (message) {
+            return message.includes("Error") || message.includes("error") || message.includes("ERROR");
+        }
+        return typeof result === 'string' && includesError(result);
+            
     };
 
     const requestFunctionCallExecution = async () => {
@@ -161,6 +169,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
 
             {/* Wrap the following content inside a container and center it */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <ToastContainer />
                 <p>State: {state}</p>
                 <p>Result:</p>
                 {result}

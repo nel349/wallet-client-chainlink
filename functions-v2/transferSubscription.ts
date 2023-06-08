@@ -97,6 +97,10 @@ export async function transferOwnershipCall(subscriptionId: number, newOwner: st
 
     } catch (error) {
         console.error(`Transaction failed: ${error}`)
+        return {
+            message: `Error: Transaction failed: ${error}`
+        }
+        
     }
 
 }
