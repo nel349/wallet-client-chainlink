@@ -6,13 +6,13 @@ import { ethers } from 'ethers';
 import { networks } from './networks';
 import { publicClient, walletClient } from '.';
 
-async function readFile(path: string): Promise<string> {
-  const response = await fetch(path);
+async function readFileFromUrl(url: string): Promise<string> {
+  const response = await fetch(url);
   const text = await response.text();
   return text;
 }
 
-export async function requestFunctionCall(consumerAddress: string, subscriptionId: number) {
+export async function requestFunctionCall(consumerAddress: string, subscriptionId: number, sourceURL: string) {
   const FunctionsOracleContract = { address: networks.ethereumSepolia["functionsOracleProxy"] as Address, abi: FunctionsOracle.abi };
 
   // Get reigstry contract and address
@@ -65,7 +65,7 @@ export async function requestFunctionCall(consumerAddress: string, subscriptionI
   const block = await provider.getBlock("latest");
   const baseFeePerGas = block?.baseFeePerGas;
   console.log("baseFeePerGas:", baseFeePerGas);
-  const source = (await readFile("public/calculation-example.js")).toString();
+  const source = (await readFileFromUrl(sourceURL)).toString();
   console.log("source:", source);
   const args = ["1", "bitcoin", "btc-bitcoin", "btc", "1000000", "450"];
   const gasLimit = 300000;

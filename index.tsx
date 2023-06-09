@@ -11,6 +11,7 @@ const subscriptionId = searchParams.get('subscriptionId');
 const consumerAddress = searchParams.get('consumerAddress');
 const amount = searchParams.get('amount');
 const newOwnerAddress = searchParams.get('newOwnerAddress');
+const urlSource = searchParams.get('urlSource');
 console.log("executionTypeParam: ", executionTypeParam);
 
 root.render(
@@ -20,5 +21,6 @@ root.render(
     consumerAddress={consumerAddress}
     amount={amount}
     newOwnerAddress={newOwnerAddress}
+    urlSource={urlSource}
   />
 )

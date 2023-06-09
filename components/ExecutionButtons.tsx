@@ -63,9 +63,9 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             
     };
 
-    const requestFunctionCallExecution = async (subid: number, address: Address) => {
+    const requestFunctionCallExecution = async (subid: number, address: Address, urlSource: string) => {
         handleButtonClick(async () => {
-            return await requestFunctionCall(address, subid);
+            return await requestFunctionCall(address, subid, urlSource);
         });
     };
 
@@ -112,7 +112,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         <div>
             {executionType === ExecutionType.RequestFunctionCall && (
                 <>
-                    <button onClick={() => requestFunctionCallExecution(props.subscriptionId, props.consumerAddress)}>
+                    <button onClick={() => requestFunctionCallExecution(props.subscriptionId, props.consumerAddress, props.urlSource)}>
                         Send Request Function Call (Example)
                     </button>
                     <br />
