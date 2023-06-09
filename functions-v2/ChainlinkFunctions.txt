@@ -1,5 +1,7 @@
 Chainlink Functions
 
+npx hardhat functions-deploy-client --network ethereumSepolia --verify true
+
 npx hardhat functions-sub-create --amount 3 --network ethereumSepolia
 
 
@@ -26,9 +28,11 @@ my existing subscription ids created:
 384
 419
 447
+471
 
 consumer addresses:
 0xf4C1B1B5f4885588f25231075D896Cf8D2946d60
+0x951D540e7B16a5718FDbe07813A1CA7F3AC69718
 
 #Account: 0xe119584dd81d99eff581AED4D22B962D6CbEB426
 subscription ids associated with 

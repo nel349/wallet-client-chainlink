@@ -61,9 +61,12 @@ export async function requestFunctionCall(consumerAddress: string, subscriptionI
   // Estimate the cost of the request
   // const provider = new ethers.AlchemyProvider(rpcUrl);
   const { maxPriorityFeePerGas,  } = await provider.getFeeData();
+  console.log("maxPriorityFeePerGas:", maxPriorityFeePerGas);
   const block = await provider.getBlock("latest");
   const baseFeePerGas = block?.baseFeePerGas;
-  const source = (await readFile("functions-v2/calculation-example.js")).toString();
+  console.log("baseFeePerGas:", baseFeePerGas);
+  const source = (await readFile("public/calculation-example.js")).toString();
+  console.log("source:", source);
   const args = ["1", "bitcoin", "btc-bitcoin", "btc", "1000000", "450"];
   const gasLimit = 300000;
 
