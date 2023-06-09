@@ -1,5 +1,7 @@
 pnpm-lock.yaml
 *.lock
 node_modules
-build
 .env
+.yarnrc
+yarn-1.22.19.cjs
+dist

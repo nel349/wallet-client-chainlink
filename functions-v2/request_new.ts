@@ -80,7 +80,7 @@ export async function requestFunctionCall(contractAddr: string, subscriptionId: 
   // const { maxPriorityFeePerGas } = await ethers.getDefaultProvider(publicClient).getFeeData();
   const block = await provider.getBlock("latest");
   const baseFeePerGas = block?.baseFeePerGas;
-  const source = (await readFile("functions-hardhat-starter-kit/calculation-example.js")).toString();
+  const source = (await readFile("./calculation-example.js")).toString();
   const args = ["1", "bitcoin", "btc-bitcoin", "btc", "1000000", "450"];
   const gasLimit = 300000;
 
