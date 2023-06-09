@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall, walletClient } from "../functions-v2";
+import { acceptOwnershipCall, addConsumerToSubscriptionCall, createSubscriptionCall, fundSubscriptionCall, removeConsumerToSubscriptionCall, requestFunctionCall, transferOwnershipCall } from "../functions-v2";
 import { Address, TransactionExecutionError } from "viem";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -63,12 +63,10 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
             
     };
 
-    const requestFunctionCallExecution = async () => {
-        requestFunctionCall(
-            "0xf4C1B1B5f4885588f25231075D896Cf8D2946d60",
-            384,
-            walletClient
-        );
+    const requestFunctionCallExecution = async (subid: number, address: Address) => {
+        handleButtonClick(async () => {
+            return await requestFunctionCall(address, subid);
+        });
     };
 
     const fundSubscriptionCallExecution = async (subid: number, amount: number) => {
@@ -114,7 +112,7 @@ export const ExecutionButtons = ({ executionType, ...props }: Props) => {
         <div>
             {executionType === ExecutionType.RequestFunctionCall && (
                 <>
-                    <button onClick={requestFunctionCallExecution}>
+                    <button onClick={() => requestFunctionCallExecution(props.subscriptionId, props.consumerAddress)}>
                         Send Request Function Call (Example)
                     </button>
                     <br />

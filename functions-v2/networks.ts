@@ -1,6 +1,6 @@
 export const networks = {
     ethereumSepolia: {
-        url: (import.meta as any).env.VITE_REACT_APP_ETHEREUM_SEPOLIA_RPC_URL_U,
+        url: (import.meta as any).env.VITE_REACT_APP_ETHEREUM_SEPOLIA_RPC_URL_U as string,
         gasPrice: undefined,
         accounts: [],
         verifyApiKey: "process.env.ETHERSCAN_API_KEY" || "UNSET",

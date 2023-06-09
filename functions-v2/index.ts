@@ -8,5 +8,5 @@ export * from "./networks";
 export {fundSubscriptionCall} from "./fundSubscription";
 export {getLatestResponse} from "./getLatestResponse";
 export {removeConsumerToSubscriptionCall} from "./removeConsumer";
-export {requestFunctionCall} from "./request_new";
+export {requestFunctionCall} from "./sendRequest";
 export {transferOwnershipCall} from "./transferSubscription";
